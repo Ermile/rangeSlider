@@ -223,6 +223,7 @@
 			var margin_type = $(this).rangeSlider('option', 'type') == 'vertical'? "top" : "left";
 			if(!$('.max_limit', this).length){
 				$(this).append("<div class='max_limit'></div>");
+				$(this).find(".max_limit").append("<span class='mount'></span>");
 				$(this).find(".max_limit").append("<svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 8 9' style='enable-background:new 0 0 8 9;' xml:space='preserve'><style type='text/css'>.st0{fill:#E96914;}</style><path class='st0' d='M3.2,0C6.7-0.1,5.4,3.5,8,4.5C5.4,5.5,6.7,9.1,3.2,9L2.7,9V7.1L0,4.5l2.7-2.6V0L3.2,0z'/></svg>");
 			}
 			if (margin_type == 'top')
@@ -329,6 +330,64 @@
 		return unit_to_pixel;
 	}
 
+
+	optionMethod.multi_level_value_to_real = function(_name, _set)
+	{
+		var json_string = $(this).attr("save_jason");
+		var steps = [];
+		var starts = [];
+		var ends = [];
+		if (json_string)
+		{
+			var json_steps = jQuery.parseJSON( json_string );
+			for (var i = 0; i < json_steps.length; i++)
+			{
+				var json_steps_details = json_steps[i];
+				var start  = parseInt(json_steps_details["start"]);
+				var end    = parseInt(json_steps_details["end"]);
+				var step   = parseInt(json_steps_details["step"]);
+				steps.push(step);
+				starts.push(start);
+				ends.push(end);
+			}
+
+			var levels = [];
+			var level = 0;
+			for (var k = 0; k < starts.length; k++)
+			{
+				level += (ends[k]-starts[k])/steps[k];
+
+				levels.push(level);
+			}
+
+			var counter = 0;
+			var changed_mount = 0;
+			var levels_length=0;
+
+			for (var i = 0; i < levels.length; i++)
+			{
+				var move = ends[i] - starts[i];
+				counter = 0;
+				levels_length++;
+
+				while(counter < ends[i])
+				{
+					counter += steps[i];
+					changed_mount++;
+
+					if (_set == counter) 
+					{
+						changed_mount = changed_mount - levels_length+1;
+						return (changed_mount)
+					}		
+				}
+			}
+			return 0
+		}
+	}
+
+
+
 	optionMethod.range_width = function(_name, _set)
 	{
 		var margin_type = $(this).rangeSlider('option', 'type')=='vertical' ? 'height' : 'width';
@@ -421,16 +480,14 @@
 			$(this).rangeSlider('option', 'unit', $(this).attr("data-unit"));
 			$(this).rangeSlider('option', 'min_default', $(this).attr("data-min-default"));
 			$(this).rangeSlider('option', 'max_default', $(this).attr("data-max-default"));
-			// $(this).rangeSlider('option', 'min_unit', $(this).attr("data-min-unit"));;
-			// $(this).rangeSlider('option', 'min_title', $(this).attr("data-min-title"));;
-			// $(this).rangeSlider('option', 'max_title', $(this).attr("data-min-title"));;
-			// $(this).rangeSlider('option', 'max_limit', $(this).attr("data-max-limit"));;
+			// $(this).rangeSlider('option', 'min_unit', $(this).attr("data-min-unit"));
+			// $(this).rangeSlider('option', 'min_title', $(this).attr("data-min-title"));
+			// $(this).rangeSlider('option', 'max_title', $(this).attr("data-min-title"));
+			// $(this).rangeSlider('option', 'max_limit', $(this).attr("data-max-limit"));
 
 
 
-			$(this).data('range-slider', {
-
-			});
+			$(this).data('range-slider', { });
 
 			$(this).init.prototype.range = function(_from, _to, _option){
 				var from = _from;
@@ -521,65 +578,82 @@
 				var from_step = Math.round(from / ($(this).rangeSlider('option', 'step'))) * ($(this).rangeSlider('option', 'step'));
 				var to_step = Math.round(to / ($(this).rangeSlider('option', 'step'))) * ($(this).rangeSlider('option', 'step'));
 
-// baraye multi level bayad meghdaare multi level ro begirim va baraye MAX meghdare MAX ruye oon tanzim beshe
-// 
-// haminjaa bayad barresii konam baraye multi level .. from va to jadiid bayad set beshe - from va to injaa 
-// 
-		if ((to_step) > (data.max_limit - data.min))
-		{
-			to_step = data.max_limit-data.min;
-		}
 
 
-				if ((to_step) > (data.max_limit-data.min))
+
+				var json_string = $(this).attr("save_jason");
+				if (json_string)
+				{
+					var my_step = $(this).rangeSlider('option','step');
+					var real_limit_unit = $(this).rangeSlider('option','multi_level_value_to_real', data.max_limit);
+					var real_limit = real_limit_unit * my_step;
+					$(this).rangeSlider('option', 'max_limit', real_limit);
+				}
+
+
+				if ((to_step) > (data.max_limit - data.min))
 				{
 					to_step = data.max_limit-data.min;
 				}
+
 
 				if ((from_step) > (data.max_limit-data.min-data.min_unit))
 				{
 					from_step = data.max_limit-data.min-data.min_unit;
 				}
 
-				if(to_step <  from_step)
-				{
-					if(data.to == to_step){
-						to_step = from_step;
-					}
-					else
+					if(to_step <  from_step)
 					{
-						from_step = to_step;
+						if(data.to == to_step)
+						{
+							to_step = from_step;
+						}
+						else
+						{
+							from_step = to_step;
+						}
 					}
-				}
 
-				if(to_step > data.unit)
-				{
-					to_step = data.unit;
-				}
+					if(to_step > data.unit)
+					{
+						to_step = data.unit;
+					}
 
-				if(from_step > data.unit)
-				{
-					from_step = data.unit;
-				}
+					if(from_step > data.unit)
+					{
+						from_step = data.unit;
+					}
 
-				if(to_step < 0)
-				{
-					to_step = 0;
-				}
+					if(to_step < 0)
+					{
+						to_step = 0;
+					}
 
-				if(from_step < 0)
-				{
-					from_step = 0;
-				}
+					if(from_step < 0)
+					{
+						from_step = 0;
+					}
 
 
-		if ($(this).attr('data-max-limit'))
-		{
-			$(this).rangeSlider('option', 'max_limit', $(this).attr('data-max-limit'));
-		}
-				var min_unit = $(this).rangeSlider('option', 'min_unit');
-				$(this).find(".dynamic-range .min .mount").attr("data-value-show", parseInt(data.min + from_step));
-				$(this).find(".dynamic-range .max .mount").attr("data-value-show", parseInt(data.min + to_step));
+					if ($(this).attr('data-max-limit'))
+					{
+						$(this).rangeSlider('option', 'max_limit', $(this).attr('data-max-limit'));
+					}
+					var min_unit = $(this).rangeSlider('option', 'min_unit');
+					$(this).find(".dynamic-range .min .mount").attr("data-value-show", parseInt(data.min + from_step));
+					$(this).find(".dynamic-range .max .mount").attr("data-value-show", parseInt(data.min + to_step));
+
+					if ($(this).rangeSlider('option','max_limit'))
+					{
+						$(this).find(".max_limit .mount").attr("data-value-show", $(this).rangeSlider('option','max_limit'));
+
+						if ($(this).attr('data-max-limit-first'))
+						{
+							console.log($(this).attr('data-max-limit-first'))
+							$(this).find(".max_limit .mount").attr("data-value-show", $(this).attr('data-max-limit-first'));
+						}
+					}
+
 
 				if ( to_step-from_step <= min_unit )
 				{
@@ -654,6 +728,8 @@
 								var move = new_to_step-(levels[i-1]);
 							}
 							var to_multi_step_value = ( starts[i] + (move*steps[i]) );
+							// console.log(to_multi_step_value)
+							// console.log(levels[i])
 							break
 						}
 					}
@@ -674,90 +750,87 @@
 							break
 						}
 					}
+
 					$(this).find(".dynamic-range .min .mount").attr("data-value-show", parseInt(from_multi_step_value));
 					$(this).find(".dynamic-range .max .mount").attr("data-value-show", parseInt(to_multi_step_value));
+
 				}
 
 
-// baraye multi level bsyad meghdaare multi level ro begirim va baraye MAX meghdare MAX ruye oon tanzim beshe
 
+				var data_value_max = $(this).find(".dynamic-range .max .mount").attr("data-value-show");
+				var data_value_min = $(this).find(".dynamic-range .min .mount").attr("data-value-show");
+				var show_title;
 
-var data_value_max = $(this).find(".dynamic-range .max .mount").attr("data-value-show");
-var data_value_min = $(this).find(".dynamic-range .min .mount").attr("data-value-show");
+				var _data = $(this).attr("data-show-title");
+				try {
+				show_title = $.parseJSON(_data);
 
-var show_title;
+				} catch (e) {
+					show_title = (_data);
+				}
 
-
-var _data = $(this).attr("data-show-title");
-try {
-show_title = $.parseJSON(_data);
-
-} catch (e) {
-	show_title = (_data);
-}
-
-
-
-if (Array.isArray(show_title))
-{
-	for (var i = show_title.length - 1; i >= 0; i--) {
-		var show_title_details = show_title[i];
-		for(var key in show_title_details)
-		{
-			var key_mount = key;
-			if (key == 'min') 
-			{
-				key = data.min;
-				var str_min = true;
-			}
-			else if (key == 'max')
-			{
-				key = data.max;
-				var str_max = true;
-			}
-
-
-			if (data_value_max == key)
-			{
-				if (key == data.min && str_min ) 
+				if (Array.isArray(show_title))
 				{
-					var key_mount = key;
-					key = 'min';
-				}
-				else if (key == data.max && str_max ) 
-				{
-					var key_mount = key;
-					key = 'max';
-				}
-				$(this).find(".dynamic-range .max .mount").attr("data-value-show",show_title_details[key]);
+					for (var i = show_title.length - 1; i >= 0; i--) {
+						var show_title_details = show_title[i];
+						for(var key in show_title_details)
+						{
+							var key_mount = key;
+							if (key == 'min') 
+							{
+								key = data.min;
+								var str_min = true;
+							}
+							else if (key == 'max')
+							{
+								key = data.max;
+								var str_max = true;
+							}
 
-				if(data_value_min == key_mount)
-				{
-					$(this).find(".dynamic-range .min .mount").attr("data-value-show",show_title_details[key]);
+
+							if (data_value_max == key)
+							{
+								if (key == data.min && str_min ) 
+								{
+									var key_mount = key;
+									key = 'min';
+								}
+								else if (key == data.max && str_max ) 
+								{
+									var key_mount = key;
+									key = 'max';
+								}
+								$(this).find(".dynamic-range .max .mount").attr("data-value-show",show_title_details[key]);
+
+								if(data_value_min == key_mount)
+								{
+									$(this).find(".dynamic-range .min .mount").attr("data-value-show",show_title_details[key]);
+								}
+							}
+							
+							else if(data_value_min == key )
+							{
+								if (key == data.min && str_min ) 
+								{
+									var key_mount = key;
+									key = 'min'
+								}
+								else if (key == data.max && str_max ) 
+								{
+									var key_mount = key;
+									key = 'max'
+								}
+								$(this).find(".dynamic-range .min .mount").attr("data-value-show",show_title_details[key]);
+								if(data_value_max == key_mount)
+								{
+									$(this).find(".dynamic-range .max .mount").attr("data-value-show",show_title_details[key]);
+								}
+							}
+						}
+					}
 				}
-			}
-			
-			else if(data_value_min == key )
-			{
-				if (key == data.min && str_min ) 
-				{
-					var key_mount = key;
-					key = 'min'
-				}
-				else if (key == data.max && str_max ) 
-				{
-					var key_mount = key;
-					key = 'max'
-				}
-				$(this).find(".dynamic-range .min .mount").attr("data-value-show",show_title_details[key]);
-				if(data_value_max == key_mount)
-				{
-					$(this).find(".dynamic-range .max .mount").attr("data-value-show",show_title_details[key]);
-				}
-			}
-		}
-	}
-}
+
 
 
 
@@ -825,6 +898,10 @@ if (Array.isArray(show_title))
 				$(this).find('.dynamic-range span.mount').show(); //design*********
 				var data_fix_mount = $(this).attr("data-fix-mount");
 
+
+				$(this).attr("data-max-limit-first", $(this).rangeSlider('option','max_limit'));
+
+
 				my_mount.hide();
 				if (data_fix_mount == 'on')
 				{
@@ -854,22 +931,6 @@ if (Array.isArray(show_title))
 
 				margin_range.show();
 				dynamic_range.show();
-
-				// if ($(this).attr('data-max-limit'))
-				// {
-				// 	$(this).append("<div class='max_limit'></div>");
-				// 	var limit_value = $(this).rangeSlider('option','max_limit') - $(this).rangeSlider('option','min');
-				// 	var limit_value_percent = (limit_value * 100) / $(this).rangeSlider('option','unit');
-				// 	var margin_type = $(this).rangeSlider('option', 'type') == 'vertical'? "top" : "left";
-				// 	if (margin_type == 'top')
-				// 	{
-				// 		$(this).find(".max_limit").css('top', 100-limit_value_percent + "%")
-				// 	}
-				// 	else
-				// 	{
-				// 		$(this).find(".max_limit").css('left', limit_value_percent + "%")
-				// 	}
-				// }
 							$(this).trigger("range-slider::init::after");
 						});
 			}
