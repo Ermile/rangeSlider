@@ -44,7 +44,7 @@ body{padding: 0 5%;font-family:sans-serif}
 .range-slider .max_limit svg,.range-slider[data-type=vertical] .max_limit svg{content:"";position:absolute;width:30px}
 .dynamic-range .max span::after{top:33px}
 .dynamic-range span::before{content:"";display:inline-block;height:15px;left:5px;top:-6px;position:absolute;z-index:22;border-left:10px solid transparent;border-right:10px solid transparent;border-top:10px solid #555}
-.range-slider[data-type=vertical] .dynamic-range span::before{left:18px;top:7px;transform:rotate(90deg)}
+.range-slider[data-type=vertical] .dynamic-range span::before{left:16px;top:3px;transform:rotate(90deg)}
 .dynamic-range .max span::before{transform:rotate(180deg);top:initial;bottom:-6px}
 .dynamic-range .min span::after{top:initial;bottom:33px}
 .range-slider[data-type=vertical] .dynamic-range .min span::after{bottom:0;left:33px;transform:rotate(180deg)}

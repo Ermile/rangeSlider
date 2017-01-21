@@ -521,7 +521,10 @@
 				var from_step = Math.round(from / ($(this).rangeSlider('option', 'step'))) * ($(this).rangeSlider('option', 'step'));
 				var to_step = Math.round(to / ($(this).rangeSlider('option', 'step'))) * ($(this).rangeSlider('option', 'step'));
 
-
+// baraye multi level bayad meghdaare multi level ro begirim va baraye MAX meghdare MAX ruye oon tanzim beshe
+// 
+// haminjaa bayad barresii konam baraye multi level .. from va to jadiid bayad set beshe - from va to injaa 
+// 
 		if ((to_step) > (data.max_limit - data.min))
 		{
 			to_step = data.max_limit-data.min;
@@ -676,6 +679,7 @@
 				}
 
 
+// baraye multi level bsyad meghdaare multi level ro begirim va baraye MAX meghdare MAX ruye oon tanzim beshe
 
 
 var data_value_max = $(this).find(".dynamic-range .max .mount").attr("data-value-show");
@@ -977,7 +981,17 @@ var add_selection = function(_name)
 			mouse_selection     = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
 			var move            = mouse_selection - ziro_on_click;
 
-			var total_width_unit   = $(_self).rangeSlider('option', 'max_limit') - $(_self).rangeSlider('option', 'min');
+			var my_max_limit 	  = $(_self).rangeSlider('option', 'max_limit');
+			if(my_max_limit)
+			{
+				var my_max_limit = $(_self).rangeSlider('option', 'max_limit');
+			}
+			else
+			{
+				var my_max_limit = $(_self).rangeSlider('option', 'max');	
+			}
+
+			var total_width_unit   = my_max_limit - $(_self).rangeSlider('option', 'min');
 			var total_width_pixel  = $(_self).rangeSlider('option', 'unit_to_pixel', total_width_unit);
 			var final_from =margin+move;
 			var final_to   =range_width+margin+move;
