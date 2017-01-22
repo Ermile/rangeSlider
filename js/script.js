@@ -98,12 +98,14 @@
 	{
 		if (_set)
 		{
+			var data_max = $(this).rangeSlider('option','max');
 			var data_min = _set;
 			if (isNaN(data_min))
 			{
 				data_min = 0;
 			}
 			$(this).attr('data-min',data_min);
+			$(this).rangeSlider('option','unit',data_max - data_min);
 			return data_min;
 		}
 
@@ -113,6 +115,7 @@
 			data_min = 0;
 			$(this).attr('data-min',data_min);
 		}
+		
 		return data_min;
 	}
 
@@ -193,10 +196,9 @@
 	}
 
 
-	optionMethod.max_limit = function(_name, _set)
+	optionMethod.max_limit = function(_name, _set, _multi)
 	{
 		var max_limit;
-
 		max_limit = parseInt($(this).attr("data-max-limit"));
 		if(_set)
 		{
@@ -208,9 +210,22 @@
 			max_limit = undefined;
 		}
 
+// agar bekhaahim ba ejraye function lhodemaan meghdaare max_limit ro taghyeer bedim bayad meghdare 3om ro set konim
+// $('#a').rangeSlider('option', 'max_limit', 500, 1);
+// 
 		if(_set)
 		{
-			if(max_limit)
+			if (_multi)
+			{
+				var json_string = $(this).attr("save_jason");
+				if (json_string)
+				{
+					var my_step = $(this).rangeSlider('option','step');
+					var real_limit_unit = $(this).rangeSlider('option','multi_level_value_to_real', _set);
+					var max_limit = real_limit_unit * my_step;
+				}
+			}
+			if(max_limit && !( max_limit <= ($(this).rangeSlider('option','min'))) )
 			{
 				$(this).attr("data-max-limit", max_limit);
 			}
@@ -234,6 +249,16 @@
 			{
 				$(this).find(".max_limit").css('left', limit_value_percent + "%")
 			}
+
+			var show_max_limit = max_limit;
+			var json_string = $(this).attr("save_jason");
+			if (json_string)
+			{
+				var my_step = $(this).rangeSlider('option','step');
+				show_max_limit = $(this).rangeSlider('option','multi_level_real_to_value', Math.round(show_max_limit/my_step));
+			}
+			$(this).attr("data-max-limit-first", show_max_limit);
+			$(this).find(".max_limit .mount").attr("data-value-show", $(this).attr('data-max-limit-first'));
 		}
 		return max_limit;
 	}
@@ -266,7 +291,6 @@
 		}
 		else
 		{
-			// return $(this).rangeSlider('option','min');
 			return 0
 		}
 	}
@@ -363,7 +387,6 @@
 			var counter = 0;
 			var changed_mount = 0;
 			var levels_length=0;
-
 			for (var i = 0; i < levels.length; i++)
 			{
 				var move = ends[i] - starts[i];
@@ -380,6 +403,59 @@
 						changed_mount = changed_mount - levels_length+1;
 						return (changed_mount)
 					}		
+				}
+			}
+			return 0
+		}
+	}
+
+
+
+	optionMethod.multi_level_real_to_value = function(_name, _set)
+	{
+		var json_string = $(this).attr("save_jason");
+		var steps = [];
+		var starts = [];
+		var ends = [];
+		if (json_string)
+		{
+			var json_steps = jQuery.parseJSON( json_string );
+			for (var i = 0; i < json_steps.length; i++)
+			{
+				var json_steps_details = json_steps[i];
+				var start  = parseInt(json_steps_details["start"]);
+				var end    = parseInt(json_steps_details["end"]);
+				var step   = parseInt(json_steps_details["step"]);
+				steps.push(step);
+				starts.push(start);
+				ends.push(end);
+			}
+
+			var levels = [];
+			var level = 0;
+			for (var k = 0; k < starts.length; k++)
+			{
+				level += (ends[k]-starts[k])/steps[k];
+				levels.push(level);
+				// console.log(ends[k])
+				// console.log(levels[k])
+			}
+
+			var changed_mount = 0;
+			var levels_length=0;
+			for (var i = 0; i < levels.length; i++)
+			{
+				var sum_counter = null;
+				levels_length++;
+				
+				while(sum_counter < ends[i]){
+					changed_mount++;
+					sum_counter += steps[i];
+					if (_set == (changed_mount-(levels_length-1)) && sum_counter)
+					{
+						changed_mount = changed_mount - 1;
+						return (sum_counter)
+					}
 				}
 			}
 			return 0
@@ -539,7 +615,6 @@
 					option.to_type = 'pixel';
 				}
 
-
 				var base_depth = this[depth_type]();
 
 				if(option.from_type == 'pixel')
@@ -579,8 +654,6 @@
 				var to_step = Math.round(to / ($(this).rangeSlider('option', 'step'))) * ($(this).rangeSlider('option', 'step'));
 
 
-
-
 				var json_string = $(this).attr("save_jason");
 				if (json_string)
 				{
@@ -601,7 +674,6 @@
 				{
 					from_step = data.max_limit-data.min-data.min_unit;
 				}
-
 					if(to_step <  from_step)
 					{
 						if(data.to == to_step)
@@ -634,7 +706,6 @@
 						from_step = 0;
 					}
 
-
 					if ($(this).attr('data-max-limit'))
 					{
 						$(this).rangeSlider('option', 'max_limit', $(this).attr('data-max-limit'));
@@ -646,16 +717,13 @@
 					if ($(this).rangeSlider('option','max_limit'))
 					{
 						$(this).find(".max_limit .mount").attr("data-value-show", $(this).rangeSlider('option','max_limit'));
-
 						if ($(this).attr('data-max-limit-first'))
 						{
-							console.log($(this).attr('data-max-limit-first'))
 							$(this).find(".max_limit .mount").attr("data-value-show", $(this).attr('data-max-limit-first'));
 						}
 					}
 
-
-				if ( to_step-from_step <= min_unit )
+				if ( to_step - from_step <= min_unit )
 				{
 					$(this).find(".dynamic-range .max .mount").attr("data-value-show", (min_unit+data.min+from_step));
 					$(this).find(".dynamic-range .min .mount").attr("data-value-show", (to_step-min_unit+data.min));
@@ -834,7 +902,6 @@
 
 
 
-
 				var id = this.attr('id');
 				if(id)
 				{
@@ -899,6 +966,9 @@
 				var data_fix_mount = $(this).attr("data-fix-mount");
 
 
+// injaaa eshtebaah shode
+// 
+// 
 				$(this).attr("data-max-limit-first", $(this).rangeSlider('option','max_limit'));
 
 
