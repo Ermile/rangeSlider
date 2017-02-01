@@ -950,28 +950,28 @@ if (json_string)
 
 					$(this).find(".dynamic-range .min .mount").attr("data-value-show", parseInt(from_multi_step_value));
 					$(this).find(".dynamic-range .max .mount").attr("data-value-show", parseInt(to_multi_step_value));
-					
-					var id = this.attr('id');
-					if(id)
-					{
-						$('[data-range-bind="' + id + '"]').each(function(){
-							var value_type = $(this).attr('data-range-value');
-							if(value_type == 'max')
-							{
-								$(this).val(to_multi_step_value);
-							}
-							else if(value_type == 'min')
-							{
-								$(this).val(from_multi_step_value);
-							}
-						});
-					}
-
 				}
 
 
 				var data_value_max = $(this).find(".dynamic-range .max .mount").attr("data-value-show");
 				var data_value_min = $(this).find(".dynamic-range .min .mount").attr("data-value-show");
+
+				var id = this.attr('id');
+				if(id)
+				{
+					$('[data-range-bind="' + id + '"]').each(function(){
+						var value_type = $(this).attr('data-range-value');
+						if(value_type == 'max')
+						{
+							$(this).val(data_value_max);
+						}
+						else if(value_type == 'min')
+						{
+							$(this).val(data_value_min);
+						}
+					});
+				}
+
 				var show_title;
 
 				var _data = $(this).attr("data-show-title");
