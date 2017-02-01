@@ -20,6 +20,16 @@ body{padding: 0 7%;font-family:sans-serif}
 .range-slider .dynamic-range .min.active::before{top:-1px;width:30px;height:30px;transform:rotate(270deg)}
 .range-slider .dynamic-range .max svg,.range-slider .dynamic-range .min svg{content:"";position:absolute;width:30px;height:30px}
 .range-slider[data-type=vertical] .dynamic-range .min.active::before{transform:rotate(0);top:initial;left:-1px}
+
+
+
+
+.range-slider .dynamic-range .min.active .mount, .range-slider .dynamic-range .max.active .mount{display:block;}
+
+
+
+
+
 .range-slider .dynamic-range .max,.range-slider .dynamic-range .min{outline:0;position:absolute;width:30px;height:30px}
 .range-slider .dynamic-range .max::after{-webkit-transform:rotate(90deg);transform:rotate(90deg)}
 .range-slider[data-type=vertical] .dynamic-range .max::after{-webkit-transform:rotate(0);transform:rotate(0)}
