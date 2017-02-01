@@ -169,7 +169,6 @@
 			{
 				data_max = data_min + 100;
 var json_string = $(this).attr("save_jason");
-console.log(json_string)
 				if (json_string)
 				{
 					console.log(11111111111)
@@ -179,35 +178,42 @@ console.log(json_string)
 			$(this).attr('data-max',data_max);
 			return data_max;
 		}
-
-
-
 		var data_max = parseInt($(this).attr('data-max'));
 
 
-var json_string = $(this).attr("save_jason");
-if (json_string && isNaN(data_max)) 
-{
-	var ends = [];
-	var multi_steps = JSON.parse($(this).attr("data-step"));
-	for (var i = 0; i < multi_steps.length; i++)
-	{
-		var multi_steps_details = multi_steps[i];
-		var end   = parseInt(multi_steps_details["end"]);
-		ends.push(end);
-	}
-	// console.log(end)
-	// 
-	// injaa ham hich tAsiri nadaare
-	data_max = end;
-
-	$(this).attr('data-max',data_max);
-}
+var my_step = 0;
 var json_string = $(this).attr("save_jason");
 if (json_string)
 {
-	// console.log(data_max)
+	var ends = [];
+	var multi_steps = JSON.parse(json_string);
+	var json_steps = multi_steps;
+	for (var i = 0; i < multi_steps.length; i++)
+	{
+		var multi_steps_details = multi_steps[i];
+		var start = parseInt(multi_steps_details["start"]);
+		var end   = parseInt(multi_steps_details["end"]);
+		ends.push(end);
+
+		var max = data_max;
+		if (max <= end && max>start)
+		{
+			end = max;
+			var step  = parseInt(multi_steps_details["step"]);
+			my_step  += ((end - start) / step);
+			break
+		}
+
+		var step  = parseInt(multi_steps_details["step"]);
+		my_step  += ((end - start) / step);
+	}
+
+
+	var _unit = $(this).rangeSlider('option', 'unit');
+	// $(this).rangeSlider('option', step,(_unit/my_step));
+	$(this).attr('data-step', (_unit/my_step));
 }
+
 		if(isNaN(data_max) || data_min >= data_max)
 		{
 			data_max = data_min + 100;
@@ -438,28 +444,16 @@ if (json_string)
 		{
 			if ($(this).rangeSlider('option', 'max_limit'))
 			{
-				
-				// console.log($(this).rangeSlider('option', 'min'))
 				var my_limit = $(this).rangeSlider('option', 'max_limit');
 				var max_limit = $(this).rangeSlider('option', 'multi_level_value_to_real', my_limit)
-// console.log('max_limit: ', $(this).rangeSlider('option', 'max_limit'))
-
-// console.log(my_step)
-console.log(my_limit)
-				// console.log($(this).rangeSlider('option', 'min'))
 			}
 			else
 			{
 				unit_to_pixel = $(this).rangeSlider('option', 'max') - $(this).rangeSlider('option', 'min');
 			}
 		}
-
 		var unit_to_pixel = parseInt((_set*pixel_width)/total_unit);
-		// if (unit_to_pixel > pixel_width)
-		// {
-		// 	console.log(33333)
-		// 	unit_to_pixel = pixel_width;
-		// }
+
 
 		return unit_to_pixel;
 	}
@@ -885,14 +879,7 @@ console.log(my_limit)
 						steps.push(step);
 						starts.push(start);
 						ends.push(end);
-// console.log('ends[',i,']: ', ends[i])
-// // console.log('max: ', max)
-// if (max <= ends[i])
-// {
-// 	ends[i] = max;
-// 	console.log(1111)
-// }
-console.log('ends[',i,']: ', ends[i])
+
 						var min = Math.round( ($(this).rangeSlider('option','min')) / ($(this).rangeSlider('option','step')) );
 						var max = ($(this).rangeSlider('option','max'));
 
@@ -1133,10 +1120,6 @@ console.log('ends[',i,']: ', ends[i])
 				{
 					$(this).range($(this).rangeSlider('option', 'min_default')-$(this).rangeSlider('option', 'min'), $(this).rangeSlider('option', 'max'));
 				}
-				// else if($(this).attr("data-infinity") == 'min')
-				// {
-				// 	$(this).range($(this).rangeSlider('option', 'min'), $(this).rangeSlider('option', 'max_default'));
-				// }
 				else
 				{
 					$(this).range($(this).rangeSlider('option', 'min_default'), $(this).rangeSlider('option', 'max_default'));
@@ -1194,10 +1177,7 @@ var add_selection = function(_name)
 
 			var final_from        = margin+move;
 			var final_to          = range_width+margin+move;
-// console.log('min: ', $(_self).rangeSlider('option', 'min'))
-// console.log('my_max_limit: ', my_max_limit)
-// console.log('my_max_limit - min: ', my_max_limit - $(_self).rangeSlider('option', 'min'))
-// console.log('total_width_pixel: ', total_width_pixel)
+
 			if (final_to >= total_width_pixel)
 			{
 				final_from = total_width_pixel-range_width;
