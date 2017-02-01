@@ -7,7 +7,9 @@ body{padding: 0 7%;font-family:sans-serif}
 .range-slider{position:relative;direction:ltr;text-align:left;-webkit-user-select:none;user-select:none}
 .range-slider *{-webkit-user-select:none;user-select:none}
 .range-slider .dynamic-range{position:relative;background-color:#00758c}
-.range-slider{height:35px;background-color:#e7e7e7;margin:2em 0;display:block}
+.range-slider{height:35px;background-color:#e7e7e7;margin:2em 0;display:block;border-right:15px solid #fff; border-left:15px solid #fff;}
+.range-slider[data-type=vertical]{border:none;border-top:15px solid #fff;border-bottom:15px solid #fff; }
+
 .range-slider .dynamic-range .min{left:-15px;top:-20px}
 .range-slider .dynamic-range .min svg{transform:rotate(270deg);}
 .range-slider[data-type=vertical] .dynamic-range .min svg{transform:none;}
@@ -35,7 +37,7 @@ body{padding: 0 7%;font-family:sans-serif}
 .range-slider[data-type=vertical] .dynamic-range .max::after{-webkit-transform:rotate(0);transform:rotate(0)}
 .range-slider .dynamic-range .min::after{-webkit-transform:rotate(270deg);transform:rotate(270deg)}
 .range-slider[data-type=vertical] .dynamic-range .min::after{transform:rotate(0)}
-.range-slider[data-type=vertical]{background-color:#e7e7e7;width:30px;margin:1em 4em;display:inline-block;min-height:100px}
+.range-slider[data-type=vertical]{background-color:#e7e7e7;width:30px;margin:1em 4em;display:inline-block;min-height:100px;}
 .range-slider[data-type=vertical] .dynamic-range{width:30px;background-color:#00667a}
 .range-slider[data-type=vertical] .dynamic-range .min{top:initial;left:-20px;bottom:-15px;-webkit-transform:rotate(180deg);transform:rotate(180deg)}
 .range-slider[data-type=vertical] .dynamic-range .max{right:-20px;top:-15px;-webkit-transform:none;transform:none}
