@@ -950,6 +950,23 @@ if (json_string)
 
 					$(this).find(".dynamic-range .min .mount").attr("data-value-show", parseInt(from_multi_step_value));
 					$(this).find(".dynamic-range .max .mount").attr("data-value-show", parseInt(to_multi_step_value));
+					
+					var id = this.attr('id');
+					if(id)
+					{
+						$('[data-range-bind="' + id + '"]').each(function(){
+							var value_type = $(this).attr('data-range-value');
+							if(value_type == 'max')
+							{
+								$(this).val(to_multi_step_value);
+							}
+							else if(value_type == 'min')
+							{
+								$(this).val(from_multi_step_value);
+							}
+						});
+					}
+
 				}
 
 
@@ -1036,23 +1053,23 @@ if (json_string)
 
 
 
-				var id = this.attr('id');
-				if(id)
-				{
-					var min_mount = $(this).find(".dynamic-range .min .mount").attr("data-value-show");
-					var max_mount = $(this).find(".dynamic-range .max .mount").attr("data-value-show");
-					$('[data-range-bind="' + id + '"]').each(function(){
-						var value_type = $(this).attr('data-range-value');
-						if(value_type == 'max')
-						{
-							$(this).val(max_mount);
-						}
-						else if(value_type == 'min')
-						{
-							$(this).val(min_mount);
-						}
-					});
-				}
+				// var id = this.attr('id');
+				// if(id)
+				// {
+				// 	var min_mount = $(this).find(".dynamic-range .min .mount").attr("data-value-show");
+				// 	var max_mount = $(this).find(".dynamic-range .max .mount").attr("data-value-show");
+				// 	$('[data-range-bind="' + id + '"]').each(function(){
+				// 		var value_type = $(this).attr('data-range-value');
+				// 		if(value_type == 'max')
+				// 		{
+				// 			$(this).val(max_mount);
+				// 		}
+				// 		else if(value_type == 'min')
+				// 		{
+				// 			$(this).val(min_mount);
+				// 		}
+				// 	});
+				// }
 
 				from = (from_step * 100) / ($(this).rangeSlider('option', 'unit'));
 				to   = (to_step * 100) / ($(this).rangeSlider('option', 'unit'));
