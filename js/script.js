@@ -325,7 +325,8 @@ var json_string = $(this).attr("save_jason");
 			}
 			else
 			{
-				if ($(document).find("body.rtl").hasClass('rtl') && $(this).rangeSlider('option','type')!='vertical')
+				console.log($(this).attr('data-support-rtl'))
+				if ($(document).find("body.rtl").hasClass('rtl') && $(this).attr('data-support-rtl') && $(this).rangeSlider('option','type')!='vertical')
 				{
 					limit_value_percent = (100-limit_value_percent);
 				}
@@ -1092,16 +1093,18 @@ var json_string = $(this).attr("save_jason");
 					add_selection.call(this, 'max').appendTo(dynamic_range);
 					add_selection.call(this, 'min').appendTo(dynamic_range);
 				}
-
+ if ($(this).attr('data-support-rtl')) 
+ {
+ 	console.log(this)
+ 	$(this).addClass('support-rtl')
+ }
 				dynamic_range.find('div.min, div.max').append("<span class='mount'></span>");
 				dynamic_range.find('div.min, div.max').append("<svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 8 9' style='enable-background:new 0 0 8 9;' xml:space='preserve'><style type='text/css'>.st1{fill:#E5A428;}</style><path class='st1' d='M3.2,0C6.7-0.1,5.4,3.5,8,4.5C5.4,5.5,6.7,9.1,3.2,9L2.7,9V7.1L0,4.5l2.7-2.6V0L3.2,0z'/></svg>");
 				var my_mount = dynamic_range.find('div.min span.mount, div.max span.mount');
 				$(this).find('.dynamic-range span.mount').show(); //design*********
 				var data_fix_mount = $(this).attr("data-fix-mount");
 
-
 				$(this).attr("data-max-limit-first", $(this).rangeSlider('option','max_limit')-$(this).rangeSlider('option','min'));
-
 				my_mount.hide();
 				if (data_fix_mount == 'on')
 				{
@@ -1150,7 +1153,7 @@ var add_selection = function(_name)
 			var mouse_position = data.type == 'vertical' ? event.pageY : event.pageX;
 			var ziro_point     = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
-			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
+			if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && data.type != 'vertical') 
 			{
 				var _width = $(_self).width();
 				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
@@ -1174,7 +1177,7 @@ var add_selection = function(_name)
 			var ziro_point        = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
 
-			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical')
+			if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && data.type != 'vertical')
 			{
 				var _width = $(_self).width();
 				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
@@ -1228,8 +1231,10 @@ var add_selection = function(_name)
 					$(_self).find('.dynamic-range span.mount').hide(); //design*********
 				}
 
-				$(document).unbind("mouseup.dynamic-range");
+				console.log('margin')
+				$(this).trigger("range-slider::mouseup::margin");
 				$(document).unbind("mousemove.dynamic-range");
+				$(document).unbind("mouseup.dynamic-range");
 			});
 			return false;
 		}).bind("mouseup", function(){
@@ -1252,7 +1257,7 @@ var add_selection = function(_name)
 			var mouse_position = data.type == 'vertical' ? e.originalEvent.touches[0].pageY : e.originalEvent.touches[0].pageX;
 			var ziro_point     = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
-			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
+			if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && data.type != 'vertical') 
 			{
 				var _width = $(_self).width();
 				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
@@ -1278,7 +1283,7 @@ var add_selection = function(_name)
 			var mouse_position  = data.type == 'vertical' ? e.originalEvent.touches[0].pageY : e.originalEvent.touches[0].pageX;
 			var ziro_point      = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
-			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical')
+			if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && data.type != 'vertical')
 			{
 				var _width = $(_self).width();
 				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
@@ -1324,6 +1329,8 @@ var add_selection = function(_name)
 			{
 				$(_self).find('.dynamic-range span.mount').hide(); //design*********
 			}
+			$(this).trigger("range-slider::touchend::margin_touch");
+			console.log('margin_touch')
 			$(document).unbind('touchend');
 			$(document).unbind('touchstart');
 			$(document).unbind('touchmove');
@@ -1342,7 +1349,7 @@ var add_selection = function(_name)
 		var mouse_position = data.type == 'vertical' ? event.pageY : event.pageX;
 		var ziro_point     = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
-		if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
+		if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && data.type != 'vertical') 
 		{
 			var _width = $(_self).width();
 			var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
@@ -1367,21 +1374,16 @@ var add_selection = function(_name)
 			mouse_selection = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
 
 
-if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
+if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && data.type != 'vertical') 
 {
 	var _width = $(_self).width();
 	var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
 	var mouse_position = -(mouse_position-screen.width)-1;
-
-
-
 	var mouse_selection = mouse_position - ziro_point;
 	mouse_selection = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
 	var move = mouse_selection - ziro_on_click;
-
 	var final_from =margin+move;
 	var final_to   =range_width+margin+move;
-
 
 	mouse_selection = _name == 'min' ? final_from : final_to;
 }
@@ -1409,6 +1411,8 @@ if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical')
 		return false;
 	}).bind("mouseup", function(){
 		$(document).unbind("mousemove.range-slider");
+		console.log('min_max')
+		$(this).trigger("range-slider::mouseup::min_max");
 	}).bind('keydown.range-slider', function(event){
 
 		var from, to, type;
@@ -1467,10 +1471,10 @@ if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical')
 			var mouse_position = data.type == 'vertical' ? e.originalEvent.touches[0].pageY : e.originalEvent.touches[0].pageX;
 			var ziro_point = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
-			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
+			if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && data.type != 'vertical') 
 			{
 				var _width = $(_self).width();
-				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
+				var ziro_point = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 				var mouse_position = -(mouse_position-screen.width)-1;
 			}
 
@@ -1492,6 +1496,10 @@ if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical')
 			{
 				$(_self).find('.dynamic-range .'+ _name +' span.mount').hide(); //design*********
 			}
+
+			$(this).trigger("range-slider::touchend::margin_touch");
+			console.log('margin_touch')
+
 			$(document).unbind("mouseup.range-slider");
 			$(document).unbind("mousemove.range-slider");
 	});
