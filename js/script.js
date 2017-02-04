@@ -282,17 +282,33 @@ var json_string = $(this).attr("save_jason");
 
 			if (_multi)
 			{
+
 				// agar bekhaahim ba ejraye function lhodemaan meghdaare max_limit ro taghyeer bedim bayad meghdare 3om ro set konim
 				// $('#a').rangeSlider('option', 'max_limit', 500, 1);
 				// 
 				var json_string = $(this).attr("save_jason");
 				if (json_string)
 				{
+					if ($(this).attr('_status') ) 
+					{
+						$(this).removeAttr('_status')
+					}
 					var my_step = $(this).rangeSlider('option','step');
 					var real_limit_unit = $(this).rangeSlider('option','multi_level_value_to_real', _set);
+					if (!real_limit_unit) 
+					{
+						console.log(' FALSE ')
+						var real_limit_unit = $(this).rangeSlider('option', 'change_multi_level_float',_set);
+						var _status = 'float';
+						$(this).attr('_status', _set);
+						console.log(_status)
+					}
 					var max_limit = real_limit_unit * my_step;
 				}
 			}
+
+		if (max_limit <= $(this).rangeSlider('option','max')) 
+		{
 			if(max_limit && !( max_limit <= ($(this).rangeSlider('option','min'))) )
 			{
 				$(this).attr("data-max-limit", max_limit);
@@ -313,7 +329,6 @@ var json_string = $(this).attr("save_jason");
 
 			var limit_value_percent = (limit_value * 100) / $(this).rangeSlider('option', 'unit');
 			var margin_type = $(this).rangeSlider('option', 'type') == 'vertical'? "top" : "left";
-
 			if(!$('.max_limit', this).length){
 				$(this).append("<div class='max_limit'></div>");
 				$(this).find(".max_limit").append("<span class='mount'></span>");
@@ -325,7 +340,6 @@ var json_string = $(this).attr("save_jason");
 			}
 			else
 			{
-				console.log($(this).attr('data-support-rtl'))
 				if ($(document).find("body.rtl").hasClass('rtl') && $(this).attr('data-support-rtl') && $(this).rangeSlider('option','type')!='vertical')
 				{
 					limit_value_percent = (100-limit_value_percent);
@@ -341,15 +355,20 @@ var json_string = $(this).attr("save_jason");
 				show_max_limit = $(this).rangeSlider('option','multi_level_real_to_value', Math.round(show_max_limit/my_step));
 			}
 			$(this).attr("data-max-limit-first", show_max_limit);
-
+			
+			if ($(this).attr('_status')) 
+			{
+				$(this).attr("data-max-limit-first", $(this).attr('_status'));
+			}
 
 			$(this).find(".max_limit .mount").attr("data-value-show", $(this).attr('data-max-limit-first'));
 		}
-
+		}
 		if(isNaN(max_limit))
 		{
 			max_limit = undefined;
 		}
+
 
 		return max_limit;
 	}
@@ -462,6 +481,75 @@ var json_string = $(this).attr("save_jason");
 	}
 
 
+
+
+
+	optionMethod.change_multi_level_float= function(_name, _set)
+	{
+		var json_string = $(this).attr("save_jason");
+		var steps  = [];
+		var starts = [];
+		var ends   = [];
+		if (json_string) 
+		{
+			var json_steps = jQuery.parseJSON( json_string );
+			for (var i = 0; i < json_steps.length; i++)
+			{
+				var json_steps_details = json_steps[i];
+				var start  = parseInt(json_steps_details["start"]);
+				var end    = parseInt(json_steps_details["end"]);
+				var step   = parseInt(json_steps_details["step"]);
+				steps.push(step);
+				starts.push(start);
+				ends.push(end);
+			}
+
+			var levels = [];
+			var level = 0;
+			for (var k = 0; k < starts.length; k++)
+			{
+				level += (ends[k]-starts[k])/steps[k];
+				levels.push(level);
+			}
+
+			var counter = 0;
+			var changed_mount = 0;
+			var levels_length=0;
+			for (var i = 0; i < levels.length; i++)
+			{
+				var move = ends[i] - starts[i];
+				counter = 0;
+				levels_length++;
+
+				while(counter < ends[i])
+				{
+					counter += steps[i];
+					changed_mount++;
+				// console.log(counter,' : ',changed_mount)
+				// console.log(levels_length)
+				// console.log(changed_mount)
+
+					if (_set == counter) 
+					{
+						changed_mount = changed_mount - levels_length+1;
+						return (changed_mount)
+					}
+					else if (_set < counter)
+					{
+						changed_mount = changed_mount - levels_length+1;
+						console.log('yeeaaaah')
+						return (changed_mount)
+					}
+				}
+			}
+			return 0
+		}
+	}
+
+
+
+
+
 	optionMethod.multi_level_value_to_real = function(_name, _set)
 	{
 		var json_string = $(this).attr("save_jason");
@@ -503,12 +591,11 @@ var json_string = $(this).attr("save_jason");
 				{
 					counter += steps[i];
 					changed_mount++;
-
 					if (_set == counter) 
 					{
 						changed_mount = changed_mount - levels_length+1;
 						return (changed_mount)
-					}		
+					}
 				}
 			}
 			return 0
@@ -784,6 +871,7 @@ var json_string = $(this).attr("save_jason");
 				if (json_string)
 				{
 					var my_step = $(this).rangeSlider('option','step');
+				// console.log(data.max_limit)
 					var real_limit_unit = $(this).rangeSlider('option','multi_level_value_to_real', data.max_limit);
 					var real_limit = real_limit_unit * my_step;
 					$(this).rangeSlider('option', 'max_limit', real_limit);
@@ -965,6 +1053,35 @@ var json_string = $(this).attr("save_jason");
 
 					$(this).find(".dynamic-range .min .mount").attr("data-value-show", parseInt(from_multi_step_value));
 					$(this).find(".dynamic-range .max .mount").attr("data-value-show", parseInt(to_multi_step_value));
+
+
+if ($(this).attr('_status')) 
+{
+	var my_limit = $(this).rangeSlider('option', 'max_limit');
+	var _step = ($(this).rangeSlider('option', 'step'));
+	my_limit = my_limit / _step;
+	var my_limit_mount = $(this).rangeSlider('option', 'multi_level_real_to_value',my_limit)
+
+	if (from_multi_step_value == my_limit_mount) 
+	{
+		$(this).find(".dynamic-range .min .mount").attr("data-value-show", parseInt($(this).attr('_status')));
+		if (from_multi_step_value == to_multi_step_value) 
+		{
+			$(this).find(".dynamic-range .max .mount").attr("data-value-show", parseInt($(this).attr('_status')));
+		}
+	}
+
+	else if (to_multi_step_value == my_limit_mount) 
+	{
+		$(this).find(".dynamic-range .max .mount").attr("data-value-show", parseInt($(this).attr('_status')));
+		if (from_multi_step_value == to_multi_step_value) 
+		{
+			$(this).find(".dynamic-range .min .mount").attr("data-value-show", parseInt($(this).attr('_status')));
+		}
+	}
+}
+
+
 				}
 
 
