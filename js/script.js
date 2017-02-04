@@ -652,15 +652,27 @@ var json_string = $(this).attr("save_jason");
 			}
 			$(this).trigger("range-slider::init::before");
 			$(this).addClass('range-slider');
+
+			var data_infinity = $(this).attr("data-infinity");
 			var id = $(this).attr('id');
 			if(id)
 			{
-				$('<input type="hidden" name="'+id+'-max" data-range-bind="'+id+'" data-range-value="max">').appendTo(this);
-				$('<input type="hidden" name="'+id+'-min" data-range-bind="'+id+'" data-range-value="min">').appendTo(this);
+				if (data_infinity == 'max')
+				{
+					$('<input type="hidden" name="'+id+'-min" data-range-bind="'+id+'" data-range-value="min">').appendTo(this);
+				}
+				else if(data_infinity == 'min')
+				{
+					$('<input type="hidden" name="'+id+'-max" data-range-bind="'+id+'" data-range-value="max">').appendTo(this);
+				}
+				else
+				{
+					$('<input type="hidden" name="'+id+'-max" data-range-bind="'+id+'" data-range-value="max">').appendTo(this);
+					$('<input type="hidden" name="'+id+'-min" data-range-bind="'+id+'" data-range-value="min">').appendTo(this);
+				}
 			}
 
 
-			var data_infinity = $(this).attr("data-infinity");
 
 
 			$(this).rangeSlider('option', 'type', $(this).attr("data-type"));
@@ -1095,7 +1107,6 @@ var json_string = $(this).attr("save_jason");
 				}
  if ($(this).attr('data-support-rtl')) 
  {
- 	console.log(this)
  	$(this).addClass('support-rtl')
  }
 				dynamic_range.find('div.min, div.max').append("<span class='mount'></span>");
@@ -1384,7 +1395,6 @@ if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-
 	var move = mouse_selection - ziro_on_click;
 	var final_from =margin+move;
 	var final_to   =range_width+margin+move;
-
 	mouse_selection = _name == 'min' ? final_from : final_to;
 }
 

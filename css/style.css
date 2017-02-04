@@ -88,6 +88,8 @@ body{padding: 0 7%;font-family:sans-serif}
 .rtl .range-slider.support-rtl[data-type='vertical'] .max_limit .mount::after{left:35px;top:-16px;}
 
 
+.rtl .range-slider.support-rtl[data-type='vertical'] .dynamic-margin,.rtl .range-slider.support-rtl[data-type='vertical'] .dynamic-range{float:left;}
+
 
 
 
