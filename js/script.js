@@ -325,6 +325,10 @@ var json_string = $(this).attr("save_jason");
 			}
 			else
 			{
+				if ($(document).find("body.rtl").hasClass('rtl') && $(this).rangeSlider('option','type')!='vertical')
+				{
+					limit_value_percent = (100-limit_value_percent);
+				}
 				$(this).find(".max_limit").css('left', limit_value_percent + "%")
 			}
 
@@ -1117,7 +1121,7 @@ var json_string = $(this).attr("save_jason");
 
 				else if ($(this).attr("data-infinity") == 'min')
 				{
-					$(this).range( 0,  $(this).rangeSlider('option', 'max_default')-$(this).rangeSlider('option', 'min'));
+					$(this).range( 0, $(this).rangeSlider('option', 'max_default')-$(this).rangeSlider('option', 'min'));
 				}
 
 				else
@@ -1146,11 +1150,12 @@ var add_selection = function(_name)
 			var mouse_position = data.type == 'vertical' ? event.pageY : event.pageX;
 			var ziro_point     = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
-if ($(this).parents("body").hasClass('rtl')) 
-{
-	var _width = $(_self).width();
-	var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
-}
+			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
+			{
+				var _width = $(_self).width();
+				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
+				var mouse_position = -(mouse_position-screen.width)-1;
+			}
 
 
 			var ziro_on_click  = mouse_position - ziro_point;
@@ -1169,16 +1174,12 @@ if ($(this).parents("body").hasClass('rtl'))
 			var ziro_point        = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
 
-
-if ($(this).parents("body").hasClass('rtl'))
-{
-console.log(433333)
-	var _width = $(_self).width();
-	var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
-	var mouse_position = -(mouse_position-screen.width);
-}
-
-
+			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical')
+			{
+				var _width = $(_self).width();
+				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
+				var mouse_position = -(mouse_position-screen.width)-1;
+			}
 
 			var mouse_selection   = mouse_position - ziro_point;
 			mouse_selection       = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
@@ -1200,9 +1201,6 @@ console.log(433333)
 				var my_max_limit = $(_self).rangeSlider('option', 'max');	
 			}
 
-// console.log('my_max_limit: ', my_max_limit)
-// console.log('min: ', $(_self).rangeSlider('option', 'min'))
-
 			var total_width_unit  = my_max_limit - $(_self).rangeSlider('option', 'min');
 			var total_width_pixel = $(_self).rangeSlider('option', 'unit_to_pixel', total_width_unit);
 
@@ -1212,7 +1210,6 @@ console.log(433333)
 
 			if (final_to >= total_width_pixel)
 			{
-			console.log(1111111)
 				final_from = total_width_pixel-range_width;
 			}
 			else if(final_from <= 0)
@@ -1255,12 +1252,12 @@ console.log(433333)
 			var mouse_position = data.type == 'vertical' ? e.originalEvent.touches[0].pageY : e.originalEvent.touches[0].pageX;
 			var ziro_point     = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
-if ($(this).parents("body").hasClass('rtl')) 
-{
-	var _width = $(_self).width();
-	var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
-}
-
+			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
+			{
+				var _width = $(_self).width();
+				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
+				var mouse_position = -(mouse_position-screen.width)-1;
+			}
 
 			var ziro_on_click  = mouse_position - ziro_point;
 			var range_width    = $(_self).rangeSlider('option','range_width');
@@ -1281,12 +1278,12 @@ if ($(this).parents("body").hasClass('rtl'))
 			var mouse_position  = data.type == 'vertical' ? e.originalEvent.touches[0].pageY : e.originalEvent.touches[0].pageX;
 			var ziro_point      = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
-if ($(this).parents("body").hasClass('rtl'))
-{
-	var _width = $(_self).width();
-	var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
-	var mouse_position = -(mouse_position-screen.width);
-}
+			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical')
+			{
+				var _width = $(_self).width();
+				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
+				var mouse_position = -(mouse_position-screen.width)-1;
+			}
 
 			var mouse_selection = mouse_position - ziro_point;
 			mouse_selection     = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
@@ -1342,6 +1339,19 @@ if ($(this).parents("body").hasClass('rtl'))
 	selection.unbind('mousedown.range-slider');
 	selection.bind('mousedown.range-slider', function(){
 		var _selection = this;
+		var mouse_position = data.type == 'vertical' ? event.pageY : event.pageX;
+		var ziro_point     = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
+
+		if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
+		{
+			var _width = $(_self).width();
+			var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
+			var mouse_position = -(mouse_position-screen.width)-1;
+		}
+
+		var ziro_on_click  = mouse_position - ziro_point;
+		var range_width    = $(_self).rangeSlider('option','range_width');
+		var margin         = $(_self).rangeSlider('option','margin');
 
 		$(document).unbind("mousemove.range-slider");
 		$(document).bind("mousemove.range-slider", function(event){
@@ -1353,19 +1363,36 @@ if ($(this).parents("body").hasClass('rtl'))
 			}
 			var mouse_position = data.type == 'vertical' ? event.pageY : event.pageX;
 			var ziro_point = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
-if ($(this).parents("body").hasClass('rtl')) 
+			var mouse_selection = mouse_position - ziro_point;
+			mouse_selection = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
+
+
+if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
 {
 	var _width = $(_self).width();
 	var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
-	var mouse_position = -(mouse_position-screen.width);
+	var mouse_position = -(mouse_position-screen.width)-1;
+
+
+
+	var mouse_selection = mouse_position - ziro_point;
+	mouse_selection = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
+	var move = mouse_selection - ziro_on_click;
+
+	var final_from =margin+move;
+	var final_to   =range_width+margin+move;
+
+
+	mouse_selection = _name == 'min' ? final_from : final_to;
 }
-			var mouse_selection = mouse_position - ziro_point;
-			mouse_selection = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
+
+
+
 			if(_name == 'max')
 			{
 				$(_self).rangeSlider('option', 'range', 'to',{type:'pixel'}, mouse_selection);
 			}
-			else
+			else if((_name == 'min'))
 			{
 				$(_self).rangeSlider('option', 'range','from',{type:'pixel'}, mouse_selection);
 			}
@@ -1440,13 +1467,12 @@ if ($(this).parents("body").hasClass('rtl'))
 			var mouse_position = data.type == 'vertical' ? e.originalEvent.touches[0].pageY : e.originalEvent.touches[0].pageX;
 			var ziro_point = data.type == 'vertical'? $(_self).offset().top : $(_self).offset().left;
 
-
-if ($(this).parents("body").hasClass('rtl')) 
-{
-	var _width = $(_self).width();
-	var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
-	var mouse_position = -(mouse_position-screen.width);
-}
+			if ($(document).find("body.rtl").hasClass('rtl') && data.type != 'vertical') 
+			{
+				var _width = $(_self).width();
+				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
+				var mouse_position = -(mouse_position-screen.width)-1;
+			}
 
 			var mouse_selection = mouse_position - ziro_point;
 			mouse_selection = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
