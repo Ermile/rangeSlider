@@ -171,7 +171,7 @@
 var json_string = $(this).attr("save_jason");
 				if (json_string)
 				{
-					console.log(11111111111)
+					// console.log(11111111111)
 					// data_max = 100000;
 				}
 			}
@@ -297,11 +297,11 @@ var json_string = $(this).attr("save_jason");
 					var real_limit_unit = $(this).rangeSlider('option','multi_level_value_to_real', _set);
 					if (!real_limit_unit) 
 					{
-						console.log(' FALSE ')
+						// console.log(' FALSE ')
 						var real_limit_unit = $(this).rangeSlider('option', 'change_multi_level_float',_set);
 						var _status = 'float';
 						$(this).attr('_status', _set);
-						console.log(_status)
+						// console.log(_status)
 					}
 					var max_limit = real_limit_unit * my_step;
 				}
@@ -525,9 +525,6 @@ var json_string = $(this).attr("save_jason");
 				{
 					counter += steps[i];
 					changed_mount++;
-				// console.log(counter,' : ',changed_mount)
-				// console.log(levels_length)
-				// console.log(changed_mount)
 
 					if (_set == counter) 
 					{
@@ -537,7 +534,7 @@ var json_string = $(this).attr("save_jason");
 					else if (_set < counter)
 					{
 						changed_mount = changed_mount - levels_length+1;
-						console.log('yeeaaaah')
+						// console.log('yeeaaaah')
 						return (changed_mount)
 					}
 				}
@@ -1260,7 +1257,7 @@ if ($(this).attr('_status'))
 					$(this).range( ($(this).rangeSlider('option', 'min_default')-$(this).rangeSlider('option', 'min')), ($(this).rangeSlider('option', 'max_default')-$(this).rangeSlider('option', 'min')) );
 				}
 
-				add_selection.call(this, 'min');
+				// add_selection.call(this, 'min');
 
 				margin_range.show();
 				dynamic_range.show();
@@ -1270,9 +1267,14 @@ if ($(this).attr('_status'))
 
 var add_selection = function(_name)
 {
+// console.log(1111)
+// console.log(_name)
+// console.log(this)
 	if (!$(this).attr("data-infinity"))
 	{
 		$(this).unbind('mousemove.dynamic-range');
+		$(document).unbind('mouseup.dynamic-range');
+		// $(this).unbind('mouseup');
 		$(this).bind('mousemove.dynamic-range', function(){
 			var dynamic_range = $(this).find(".dynamic-range");
 
@@ -1296,6 +1298,7 @@ var add_selection = function(_name)
 			var on_click_from  = $(_self).rangeSlider('option', 'range', 'from', {type:'pixel'});
 
 		$(document).unbind("mousemove.dynamic-range");
+		$(document).unbind('mouseup.dynamic-range');
 		$(document).bind("mousemove.dynamic-range", function(event){
 
 
@@ -1351,19 +1354,23 @@ var add_selection = function(_name)
 			$(_self).rangeSlider('option', 'range', 'to',{type:'pixel'}, final_to);
 			$(_self).rangeSlider('option', 'range','from',{type:'pixel'}, final_from);
 
-			}).bind("mouseup.dynamic-range", function(){
 
+
+			}).bind("mouseup.dynamic-range", function(){
+				$(document).unbind("mousemove.dynamic-range");
+
+				// console.log('margin')
+				console.log('margin')
+				$(this).trigger("range-slider::mouseup::margin");
+				
 				$(_self).find('.dynamic-range div.min , .dynamic-range div.max').removeClass("active"); //design*********
 				if (data_fix_mount != "on")
 				{
 					$(_self).find('.dynamic-range span.mount').hide(); //design*********
 				}
 
-				console.log('margin')
-				$(this).trigger("range-slider::mouseup::margin");
-				$(document).unbind("mousemove.dynamic-range");
 				$(document).unbind("mouseup.dynamic-range");
-			});
+			})
 			return false;
 		}).bind("mouseup", function(){
 			$(dynamic_range).unbind("mousedown.dynamic-range");
@@ -1458,7 +1465,7 @@ var add_selection = function(_name)
 				$(_self).find('.dynamic-range span.mount').hide(); //design*********
 			}
 			$(this).trigger("range-slider::touchend::margin_touch");
-			console.log('margin_touch')
+			// console.log('margin_touch')
 			$(document).unbind('touchend');
 			$(document).unbind('touchstart');
 			$(document).unbind('touchmove');
@@ -1501,21 +1508,18 @@ var add_selection = function(_name)
 			var mouse_selection = mouse_position - ziro_point;
 			mouse_selection = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
 
-
-if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && data.type != 'vertical') 
-{
-	var _width = $(_self).width();
-	var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
-	var mouse_position = -(mouse_position-screen.width)-1;
-	var mouse_selection = mouse_position - ziro_point;
-	mouse_selection = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
-	var move = mouse_selection - ziro_on_click;
-	var final_from =margin+move;
-	var final_to   =range_width+margin+move;
-	mouse_selection = _name == 'min' ? final_from : final_to;
-}
-
-
+			if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && data.type != 'vertical') 
+			{
+				var _width = $(_self).width();
+				var ziro_point = data.type == 'vertical'? $(_self).offset().top : _width-$(_self).offset().left;
+				var mouse_position = -(mouse_position-screen.width)-1;
+				var mouse_selection = mouse_position - ziro_point;
+				mouse_selection = data.type == 'vertical' ? $(_self).height() - mouse_selection : mouse_selection;
+				var move = mouse_selection - ziro_on_click;
+				var final_from =margin+move;
+				var final_to   =range_width+margin+move;
+				mouse_selection = _name == 'min' ? final_from : final_to;
+			}
 
 			if(_name == 'max')
 			{
@@ -1532,14 +1536,20 @@ if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-
 			{
 				$(_self).find('.dynamic-range .'+ _name +' span.mount').hide(); //design*********
 			}
-			$(document).unbind("mouseup.range-slider");
+
+
 			$(document).unbind("mousemove.range-slider");
+			
+			console.log('min_max')
+			$(this).trigger("range-slider::mouseup::min_max");
+
+			$(document).unbind("mouseup.range-slider");
 		});
 		return false;
 	}).bind("mouseup", function(){
 		$(document).unbind("mousemove.range-slider");
-		console.log('min_max')
-		$(this).trigger("range-slider::mouseup::min_max");
+		
+		
 	}).bind('keydown.range-slider', function(event){
 
 		var from, to, type;
@@ -1552,32 +1562,48 @@ if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-
 
 		if($(this).is('.max'))
 		{
+
 			if (data_fix_mount != "on")
 			{
 				$(_self).find('.dynamic-range .max span.mount').show(); //design*********
 			}
 			if(event.keyCode == 38 || event.keyCode == 39)
 			{
+				if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && event.keyCode == 39)
+				{
+					change_by_key = change_by_key*(-1);
+				}
 				$(this).parents('.range-slider').rangeSlider('option', 'range', 'to', {type:'step_plus'}, change_by_key);
 				return false;
 			}
 			else if(event.keyCode == 37 || event.keyCode == 40)
 			{
+				if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && event.keyCode == 37)
+				{
+					change_by_key = change_by_key*(-1);
+				}
 				$(this).parents('.range-slider').rangeSlider('option', 'range', 'to', {type:'step_plus'}, -change_by_key);
 				return false;
 			}
 		}
-
 		else
 		{
 			$(_self).find('.dynamic-range .min span.mount').show(); //design*********
 			if(event.keyCode == 38 || event.keyCode == 39)
 			{
+				if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && event.keyCode == 39)
+				{
+					change_by_key = change_by_key*(-1);
+				} 
 				$(this).parents('.range-slider').rangeSlider('option', 'range', 'from', {type:'step_plus'}, change_by_key);
 				return false;
 			}
 			else if(event.keyCode == 37 || event.keyCode == 40)
 			{
+				if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-rtl') && event.keyCode == 37)
+				{
+					change_by_key = change_by_key*(-1);
+				} 
 				$(this).parents('.range-slider').rangeSlider('option', 'range', 'from', {type:'step_plus'}, -change_by_key);
 				return false;
 			}
@@ -1588,6 +1614,9 @@ if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-
 			$(_self).find('.dynamic-range .max span.mount').hide(); //design*********
 			$(_self).find('.dynamic-range .min span.mount').hide(); //design*********
 		}
+	}).bind('keyup.range-slider',function(event){
+		console.log('keyup')
+		$(this).trigger("range-slider::keyup");
 	}).bind('touchmove',function(e){
 	      e.preventDefault();
 			$(_self).find('.dynamic-range .'+ _name).addClass("active"); //design*********
@@ -1624,8 +1653,8 @@ if ($(document).find("body.rtl").hasClass('rtl') && $(_self).attr('data-support-
 				$(_self).find('.dynamic-range .'+ _name +' span.mount').hide(); //design*********
 			}
 
-			$(this).trigger("range-slider::touchend::margin_touch");
-			console.log('margin_touch')
+			$(this).trigger("range-slider::touchend::min_max_touch");
+			console.log('min_max_touch')
 
 			$(document).unbind("mouseup.range-slider");
 			$(document).unbind("mousemove.range-slider");
