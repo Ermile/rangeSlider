@@ -4,12 +4,15 @@ body{padding: 0 7%;font-family:sans-serif}
 
 
 /* copy and paste below code*/
-.range-slider{position:relative;direction:ltr;text-align:left;-webkit-user-select:none;user-select:none}
-.range-slider *{-webkit-user-select:none;user-select:none}
-.range-slider .dynamic-range{position:relative;background-color:#00758c}
+.range-slider{position:relative;direction:ltr;text-align:left;-webkit-user-select:none;user-select:none;}
+.range-slider *{-webkit-user-select:none;user-select:none;}
+
+
+
+.range-slider .dynamic-range{position:relative;background-color:#00758c;}
 .range-slider{height:35px;background-color:#e7e7e7;margin:2em 0;display:block;border-right:15px solid #fff; border-left:15px solid #fff;}
 .range-slider[data-type=vertical]{border:none;border-top:15px solid #fff;border-bottom:15px solid #fff; }
-.range-slider .dynamic-range .min{left:-15px;top:-20px}
+.range-slider .dynamic-range .min{left:-15px;top:-20px;}
 .range-slider .dynamic-range .min svg{transform:rotate(270deg);}
 .range-slider[data-type=vertical] .dynamic-range .min svg{transform:none;}
 .range-slider .dynamic-range .max{right:-15px;bottom:-20px;}
